@@ -11,6 +11,8 @@ char pswd[] = "12345678";
 unsigned int SetTime = 90000;
 unsigned long LastTime = 0;
 
+int fl,hum,tmp;
+
 BlinkerNumber Hum("num-qb2");
 BlinkerNumber Tem("num-uh4");
 BlinkerNumber Body("num-q3t");
@@ -33,16 +35,11 @@ void parseJOSN(String Weather)
   const int cloud = doc["cloud"]; 
   const int cond_code = doc["cond_code"]; 
   const char* cond_txt = doc["cond_txt"]; 
-  const int fl = doc["fl"]; 
-  const int hum = doc["hum"];
-  const char* pcpn = doc["pcpn"]; 
-  const char* pres = doc["pres"]; 
-  const int tmp = doc["tmp"]; 
-  const char* vis = doc["vis"]; 
-  const char* wind_deg = doc["wind_deg"]; 
-  const char* wind_dir = doc["wind_dir"]; 
-  const char* wind_sc = doc["wind_sc"]; 
-  const char* wind_spd = doc["wind_spd"]; 
+  
+  fl = doc["fl"]; 
+  hum = doc["hum"];
+  tmp = doc["tmp"]; 
+
  
   Hum.print(hum);
   Tem.print(tmp);
@@ -52,7 +49,12 @@ void parseJOSN(String Weather)
   BLINKER_LOG("体感温度:",fl);
 }
 
-
+void heartbeat()
+{
+  Hum.print(hum);
+  Tem.print(tmp);
+  Body.print(fl);
+}
 void dataRead(const String & data)
 {
   BLINKER_LOG("Blinker readString: ", data);
@@ -79,6 +81,7 @@ void setup()
   
   Blinker.attachData(dataRead);
   Blinker.attachWeather(weatherData);
+  Blinker.attachHeartbeat(heartbeat);
 }
 
 void loop()
